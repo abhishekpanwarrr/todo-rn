@@ -11,8 +11,8 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
-import reduxStorage from "./src/storage";
-import themeReducer from "./src/theme.slice";
+import reduxStorage from "./src/store/storage";
+import themeReducer from "./src/slices/theme.slice";
 import { PersistGate } from 'redux-persist/integration/react';
 import Navigation from "./src/navigation/Navigation";
 import tokenSlice from "./src/slices/token.slice";
