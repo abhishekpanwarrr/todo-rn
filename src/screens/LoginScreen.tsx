@@ -12,8 +12,8 @@ import {
 import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDarkTheme } from '../theme.slice';
-import { setToken } from '../slices/token.slice';
+import { setDarkTheme } from '../slices/theme.slice';
+import { setToken, setUser } from '../slices/token.slice';
 
 const LoginScreen = ({ navigation }: any) => {
   const token = useSelector((state: any) => state.token)
@@ -40,10 +40,12 @@ const LoginScreen = ({ navigation }: any) => {
         body: JSON.stringify(user),
       });
       const data = await response.json();
+      console.log("🚀 ~ handleLogin ~ data:", data)
       if (response.status === 200) {
         setEmail('');
         setPassword('');
         dispatch(setToken(data?.token))
+        dispatch(setUser(data?.user))
         return Alert.alert('Logged successfully');
       }
       if (response.status === 404) {
