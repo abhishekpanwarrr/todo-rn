@@ -1,38 +1,53 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import HomeScreen from './src/screens/HomeScreen';
-import CalenderScreen from './src/screens/CalenderScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
 
-const Tab = createBottomTabNavigator();
+import { Provider } from "react-redux";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
+import reduxStorage from "./src/storage";
+import themeReducer from "./src/theme.slice";
+import { PersistGate } from 'redux-persist/integration/react';
+import Navigation from "./src/navigation/Navigation";
+import tokenSlice from "./src/slices/token.slice";
 
+const rootReducer = combineReducers({
+  theme: themeReducer,
+  token: tokenSlice
+});
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage: reduxStorage,
+  timeout: 0,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+export const persistor = persistStore(store);
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName;
-            if (route.name === 'Home') {
-              iconName = 'home-outline';
-            } else if (route.name === 'Calendar') {
-              iconName = 'calendar-number-outline';
-            } else if (route.name === 'Profile') {
-              iconName = 'person-circle-outline';
-            } else {
-              iconName = 'ios-alert';
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          headerShown: false,
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Calendar" component={CalenderScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Navigation />
+      </PersistGate>
+    </Provider>
   );
 }
