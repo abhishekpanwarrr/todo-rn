@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomModal, ModalContent, ModalPortal, ModalTitle, SlideAnimation } from "react-native-modals"
 import { useDispatch, useSelector } from 'react-redux';
+import { setToken } from '../slices/token.slice';
 
 const HomeScreen = () => {
   const [todos, setTodos] = useState([]);
@@ -49,6 +50,7 @@ const HomeScreen = () => {
     },
   ];
   const user = useSelector((state: any) => state.token.user);
+  console.log("🚀 ~ HomeScreen ~ user:", user)
   const dispatch = useDispatch()
   const handleAddTodo = async () => {
     if (!todo) {
@@ -82,7 +84,7 @@ const HomeScreen = () => {
       console.log("ran");
 
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/todo/${user?.userId}/todos`, {
+        const response = await fetch(`https://todo-rn-backend.vercel.app/api/v1/todo/${user?._id}/todos`, {
           method: "GET"
         })
 
@@ -103,7 +105,7 @@ const HomeScreen = () => {
   const setMarkedTodo = async (todoId: any) => {
     try {
       setMarked(true)
-      const response = await fetch(`http://localhost:8000/api/v1/todo/${todoId}/complete`, {
+      const response = await fetch(`https://todo-rn-backend.vercel.app/api/v1/todo/${todoId}/complete`, {
         method: "PATCH"
       })
       const data = await response.json();
@@ -177,7 +179,7 @@ const HomeScreen = () => {
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => setIsVisible(true)}
+            onPress={() => dispatch(setToken(null))}
             style={{
               backgroundColor: '#007fff',
               borderRadius: 50,

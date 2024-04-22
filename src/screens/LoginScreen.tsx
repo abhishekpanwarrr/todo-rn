@@ -16,8 +16,6 @@ import { setDarkTheme } from '../slices/theme.slice';
 import { setToken, setUser } from '../slices/token.slice';
 
 const LoginScreen = ({ navigation }: any) => {
-  const token = useSelector((state: any) => state.token)
-  console.log("🚀 ~ LoginScreen ~ token:", token)
   const dispatch = useDispatch()
 
   const [email, setEmail] = useState('');
@@ -32,7 +30,7 @@ const LoginScreen = ({ navigation }: any) => {
         email,
         password,
       };
-      const response = await fetch('http://localhost:8000/api/v1/user/login', {
+      const response = await fetch('https://todo-rn-backend.vercel.app/api/v1/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,13 +38,12 @@ const LoginScreen = ({ navigation }: any) => {
         body: JSON.stringify(user),
       });
       const data = await response.json();
-      console.log("🚀 ~ handleLogin ~ data:", data)
       if (response.status === 200) {
         setEmail('');
         setPassword('');
         dispatch(setToken(data?.token))
         dispatch(setUser(data?.user))
-        return Alert.alert('Logged successfully');
+        return Alert.alert('Logged in successfully');
       }
       if (response.status === 404) {
         setEmail('');
