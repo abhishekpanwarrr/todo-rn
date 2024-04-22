@@ -3,20 +3,19 @@ import {
   KeyboardAvoidingView,
   Pressable,
   SafeAreaView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
 
 const RegisterScreen = ({navigation}: any) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(false);
+
   const handleRegister = async () => {
     if (email === '' || name === '' || password === '') {
       return Alert.alert('Please fill all fields');
@@ -54,6 +53,7 @@ const RegisterScreen = ({navigation}: any) => {
       return Alert.alert('Please try again later.!');
     }
   };
+
   return (
     <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
       <View
@@ -226,5 +226,3 @@ const RegisterScreen = ({navigation}: any) => {
 };
 
 export default RegisterScreen;
-
-const styles = StyleSheet.create({});

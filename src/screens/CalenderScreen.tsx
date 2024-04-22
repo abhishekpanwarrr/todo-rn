@@ -1,24 +1,33 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import moment from "moment"
 import { Calendar } from 'react-native-calendars';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { TTodo } from '../components/PendingTodos';
 const CalenderScreen = () => {
   const today = moment().format("YYYY-MM-DD");
   const [selectedDate, setSelectedDate] = useState(today)
   const [todos, setTodos] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`https://todo-rn-backend.vercel.app/api/v1/todo/todos/completed/${selectedDate}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      const data = await response.json()
-      const completedTodos = data.completedTodos || [];
-      setTodos(completedTodos)
+      try {
+        setLoading(true)
+        const response = await fetch(`https://todo-rn-backend.vercel.app/api/v1/todo/todos/completed/${selectedDate}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        const data = await response.json()
+        const completedTodos = data.completedTodos || [];
+        setTodos(completedTodos)
+        setLoading(false)
+      } catch (error) {
+        console.log("🚀 ~ error:", error)
+        setLoading(false)
+      }
     })()
   }, [selectedDate])
   return (
@@ -37,6 +46,9 @@ const CalenderScreen = () => {
         flex: 1,
         paddingHorizontal: 10
       }}>
+        {loading && <ActivityIndicator style={{
+          marginTop: 20
+        }} size={"large"} color={"black"} />}
         {todos?.length > 0 && (
           <View>
             <View style={{
@@ -55,7 +67,7 @@ const CalenderScreen = () => {
               marginBottom: 30,
               paddingBottom: 30
             }}>
-              {todos.length > 0 && todos.map((todo) => (
+              {todos.length > 0 && todos.map((todo: TTodo) => (
                 <Pressable key={todo?._id} style={{
                   backgroundColor: "#e0e0e0",
                   borderRadius: 8, marginVertical: 10,
@@ -66,8 +78,6 @@ const CalenderScreen = () => {
                     alignItems: "center",
                     gap: 5
                   }}>
-                    {/* checkmark-circle-outline */}
-                    {/* <Ionicons name='checkmark-outline' size={30} color={"black"} /> */}
                     <Ionicons name='checkmark-circle-outline' size={20} color={"gray"} />
                     <Text style={{ flex: 1, textDecorationLine: "line-through", color: "gray" }}>{todo?.title}</Text>
                     <Ionicons name='flag-outline' size={20} color={"black"} />
@@ -77,11 +87,23 @@ const CalenderScreen = () => {
             </ScrollView>
           </View>
         )}
+        {!loading && todos?.length <= 0 && (
+          <View style={{
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 10
+          }}>
+            <Text style={{
+              fontSize: 16,
+              fontWeight: "600",
+              textDecorationLine: "underline",
+              textDecorationColor: "gray"
+            }}>No tasks found!</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   )
 }
 
 export default CalenderScreen
-
-const styles = StyleSheet.create({})

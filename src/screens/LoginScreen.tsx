@@ -3,7 +3,6 @@ import {
   KeyboardAvoidingView,
   Pressable,
   SafeAreaView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -11,8 +10,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useDispatch, useSelector } from 'react-redux';
-import { setDarkTheme } from '../slices/theme.slice';
+import { useDispatch } from 'react-redux';
 import { setToken, setUser } from '../slices/token.slice';
 
 const LoginScreen = ({ navigation }: any) => {
@@ -21,6 +19,7 @@ const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(false);
+
   const handleLogin = async () => {
     if (email === '' || password === '') {
       return Alert.alert('Please fill all fields');
@@ -60,6 +59,7 @@ const LoginScreen = ({ navigation }: any) => {
       return Alert.alert('Please try again later.!');
     }
   };
+  
   return (
     <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
       <View
@@ -218,5 +218,3 @@ const LoginScreen = ({ navigation }: any) => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({});
